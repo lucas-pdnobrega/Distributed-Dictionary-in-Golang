@@ -21,44 +21,53 @@ func main() {
 	client.UseService(&ro)
 
 	for {
-		fmt.Printf(`
-			Escolha uma opção :
-
-			1 - Get
-			2 - Atualizar
-			3 - Remover
-			4 - Sair
-		`)
+		fmt.Printf("\nEscolha uma opção :\n1 - Get\n2 - Atualizar\n3 - Remover\n4 - Sair\n")
 		fmt.Scan(&opcao)
 
 		switch opcao {
 			case 1:
 				
-				fmt.Println("Insira uma chave")
+				fmt.Println("Digite a chave a consultar: ")
 				fmt.Scan(&chave)
-				fmt.Println(ro.Get(chave))
+
+				val := ro.Get(chave)
+				
+				if val == -1 {
+					fmt.Println("-> Chave não encontrada.")
+				} else {
+					fmt.Printf("-> Valor armazenado: %d\n", val)
+				}
 
 			case 2:
-
 				
-				fmt.Println("Insira uma chave")
+				fmt.Println("-> Digite a chave para atualizar: ")
 				fmt.Scan(&chave)
-				
-				fmt.Println("Insira um número")
+				fmt.Println("-> Insira seu novo valor: ")
 				fmt.Scan(&n)
 				
-				fmt.Println(ro.Update(chave, n))
+				ok := ro.Update(chave, n)
+				if ok {
+					fmt.Println("-> Valor atualizado.")
+				} else {
+					fmt.Println("-> Falha: chave inexistente.")
+				}
 
 			case 3:
 				
 				fmt.Println("Insira uma chave")
 				fmt.Scan(&chave)
-				
-				fmt.Println("Insira um número")
-				fmt.Println(ro.Remove(chave))
+				ok := ro.Remove(chave)
+				if ok {
+					fmt.Println("-> Valor removido.")
+				} else {
+					fmt.Println("-> Falha: chave inexistente.")
+				}
 			
 			case 4:
 				os.Exit(0)
+
+			default:
+				fmt.Println("-> Falha: Opção inválida.")
 		}
 	}
 }

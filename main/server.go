@@ -19,36 +19,31 @@ type dictService struct{}
 func (dictService) Update ( chave string, valor int) bool {
 
 	mutex.Lock()
-	_, exists := dict[chave]
-	if (!exists) {
-		return false
-	}
-
-	dict[chave] = valor
 	defer mutex.Unlock()
 
-	return true
+	_, exists := dict[chave]
+	dict[chave] = valor
+
+	return exists
 }
 
 func (dictService) Remove ( chave string ) bool {
 
 	mutex.Lock()
-	_, exists := dict[chave]
-	if (!exists) {
-		return false
-	} else {
-		delete(dict, chave)
-	}
 	defer mutex.Unlock()
 
-	return true
+	_, exists := dict[chave]
+	delete(dict, chave)
+
+	return exists
 }
 
 func (dictService) Get ( chave string ) int {
 
 	mutex.Lock()
-	res, exists := dict[chave]
 	defer mutex.Unlock()
+
+	res, exists := dict[chave]
 
 	if (!exists) {
 		return -1
