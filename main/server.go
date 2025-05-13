@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"sync"
 	"net/http"
+	"sync"
+
 	"github.com/hprose/hprose-go/hprose"
 )
 
@@ -15,39 +16,39 @@ var (
 
 type dictService struct{}
 
-func (dictService) update ( chave string, valor int) bool {
+func (dictService) Update ( chave string, valor int) bool {
 
 	mutex.Lock()
-	res, exists := dict[chave]
+	_, exists := dict[chave]
 	if (!exists) {
 		return false
 	}
 
 	dict[chave] = valor
-	mutex.Unlock()
+	defer mutex.Unlock()
 
 	return true
 }
 
-func (dictService) remove ( chave string ) bool {
+func (dictService) Remove ( chave string ) bool {
 
 	mutex.Lock()
-	res, exists := dict[chave]
+	_, exists := dict[chave]
 	if (!exists) {
 		return false
 	} else {
 		delete(dict, chave)
 	}
-	mutex.Unlock()
+	defer mutex.Unlock()
 
 	return true
 }
 
-func (dictService) get ( chave string ) int {
+func (dictService) Get ( chave string ) int {
 
 	mutex.Lock()
 	res, exists := dict[chave]
-	mutex.Unlock()
+	defer mutex.Unlock()
 
 	if (!exists) {
 		return -1
@@ -60,4 +61,5 @@ func main() {
 	service := hprose.NewHttpService()
 	service.AddMethods(dictService{})
 	http.ListenAndServe(":8080", service)
+	fmt.Println("Server running on localhost:8080")
 }
